@@ -1,26 +1,26 @@
-<template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
-</template>
+<script setup>
+import { useTheme } from 'vuetify'
+import { useThemeConfig } from '@core/composable/useThemeConfig'
+import { hexToRgb } from '@layouts/utils'
 
-<script>
-import HelloWorld from './components/HelloWorld.vue'
+const {
+  syncInitialLoaderTheme,
+  syncVuetifyThemeWithTheme: syncConfigThemeWithVuetifyTheme,
+  isAppRtl,
+} = useThemeConfig()
 
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+const { global } = useTheme()
+
+// ℹ️ Sync current theme with initial loader theme
+syncInitialLoaderTheme()
+syncConfigThemeWithVuetifyTheme()
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+<template>
+  <VLocaleProvider :rtl="isAppRtl">
+    <!-- ℹ️ This is required to set the background color of active nav link based on currently active global theme's primary -->
+    <VApp :style="`--v-global-theme-primary: ${hexToRgb(global.current.value.colors.primary)}`">
+      <RouterView />
+    </VApp>
+  </VLocaleProvider>
+</template>
